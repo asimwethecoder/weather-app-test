@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, useMapEvents, useMap, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { WeatherData } from '../App';
 import { fetchWeatherData } from '../utils/apiUtils';
+import { Icon } from 'leaflet';
 
 interface MapEventsProps {
   setWeatherData: React.Dispatch<React.SetStateAction<WeatherData | null>>;
@@ -43,7 +44,7 @@ function MapCenterUpdater({ weatherData }: { weatherData: WeatherData | null }) 
     if (weatherData && weatherData.coord) {
       const { lat, lon } = weatherData.coord;
       console.log(`Updating map center to: [${lat}, ${lon}]`);
-      map.setView([lat, lon], 13);
+      map.setView([lat, lon], 10);
     }
   }, [weatherData, map]);
   
@@ -56,6 +57,17 @@ interface MapProps {
   apiKeyValidated: boolean;
   weatherData: WeatherData | null;
 }
+
+// Define the location pin marker icon
+const locationIcon = new Icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
 
 function Map({ setWeatherData, setError, apiKeyValidated, weatherData }: MapProps) {
   return (
@@ -74,6 +86,14 @@ function Map({ setWeatherData, setError, apiKeyValidated, weatherData }: MapProp
         apiKeyValidated={apiKeyValidated} 
       />
       {weatherData && <MapCenterUpdater weatherData={weatherData} />}
+      
+      {/* Add the location pin marker when weather data is available */}
+      {weatherData && weatherData.coord && (
+        <Marker 
+          position={[weatherData.coord.lat, weatherData.coord.lon]}
+          icon={locationIcon}
+        />
+      )}
     </MapContainer>
   );
 }
