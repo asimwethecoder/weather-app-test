@@ -30,7 +30,7 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [apiKeyValidated, setApiKeyValidated] = useState(false);
   
-  // Validate API key on component mount
+  
   useEffect(() => {
     // Log API key status (not the actual key) for troubleshooting
     const apiKeyExists = !!import.meta.env.VITE_OPENWEATHER_API_KEY;
